@@ -1,7 +1,7 @@
 ################
 # Constructors #
 ################
-GradientNumber{N,T}(value::T, grad::NTuple{N,T}) = GradientNumber{N,T,NTuple{N,T}}(value, Partials(grad))
+GradientNumber{N,T}(value::T, grad::Vec{N,T}) = GradientNumber{N,T,Vec{N,T}}(value, Partials(grad))
 GradientNumber{T}(value::T, grad::T...) = GradientNumber(value, grad)
 
 ##############################

@@ -1,11 +1,9 @@
 immutable Partials{T,C}
     data::C
-    Partials{N}(data::NTuple{N,T}) = new(data)
-    Partials(data::Vector{T}) = new(data)
+    Partials{N}(data::Vec{N,T}) = new(data)
 end
 
-typealias PartialsTup{N,T} Partials{T,NTuple{N,T}}
-typealias PartialsVec{T} Partials{T,Vector{T}}
+typealias PartialsTup{N,T} Partials{T,Vec{N,T}}
 
 Partials(data) = Partials{eltype(data),typeof(data)}(data)
 
@@ -31,11 +29,8 @@ done(partials, i) = done(data(partials), i)
 ################
 # Constructors #
 ################
-@inline zero_partials{C<:Tuple}(::Type{C}, n::Int) = Partials(zero_tuple(C))
+@inline zero_partials{C<:Vec}(::Type{C}, n::Int) = Partials(zero_tuple(C))
 zero_partials{T}(::Type{Vector{T}}, n) = Partials(zeros(T, n))
-
-@inline rand_partials{C<:Tuple}(::Type{C}, n::Int) = Partials(rand_tuple(C))
-rand_partials{T}(::Type{Vector{T}}, n::Int) = Partials(rand(T, n))
 
 #####################
 # Generic Functions #
@@ -53,39 +48,6 @@ hash(partials::Partials, hsh::UInt64) = hash(hash(partials), hsh)
 
 @inline copy(partials::Partials) = partials
 
-function read{N,T}(io::IO, ::Type{PartialsTup{N,T}}, n::Int)
-    return Partials(ntuple(i->read(io, T), Val{N}))
-end
-
-function read{T}(io::IO, ::Type{PartialsVec{T}}, n::Int)
-    return Partials([read(io, T) for i in 1:n])
-end
-
-function write(io::IO, partials::Partials)
-    for partial in data(partials)
-        write(io, partial)
-    end
-end
-
-########################
-# Conversion/Promotion #
-########################
-convert{N,A,B}(::Type{PartialsTup{N,A}}, data::NTuple{N,B}) = PartialsTup{N,A}(NTuple{N,A}(data))
-convert{N,A,B}(::Type{PartialsTup{N,A}}, data::Vector{B}) = PartialsTup{N,A}(NTuple{N,A}(data...))
-convert{N,A,B}(::Type{PartialsVec{A}}, data::NTuple{N,B}) = PartialsVec{A}(Vector{A}(collect(data)))
-convert{A,B}(::Type{PartialsVec{A}}, data::Vector{B}) = PartialsVec{A}(Vector{A}(data))
-convert{T}(::Type{PartialsVec{T}}, data::Vector{T}) = PartialsVec{T}(data)
-convert{N,T}(::Type{PartialsTup{N,T}}, data::NTuple{N,T}) = PartialsTup{N,T}(data)
-
-convert{T,C}(::Type{Partials{T,C}}, partials::Partials) = Partials{T,C}(data(partials))
-convert{T,C}(::Type{Partials{T,C}}, partials::Partials{T,C}) = partials
-convert(::Type{Partials}, partials::Partials) = partials
-
-promote_rule{A,B}(::Type{PartialsVec{A}}, ::Type{PartialsVec{B}}) = PartialsVec{promote_type(A, B)}
-promote_rule{N,A,B}(::Type{PartialsTup{N,A}}, ::Type{PartialsVec{B}}) = PartialsVec{promote_type(A, B)}
-promote_rule{N,A,B}(::Type{PartialsVec{A}}, ::Type{PartialsTup{N,B}}) = PartialsVec{promote_type(A, B)}
-promote_rule{N,A,B}(::Type{PartialsTup{N,A}}, ::Type{PartialsTup{N,B}}) = PartialsTup{N,promote_type(A, B)}
-
 ##################
 # Math Functions #
 ##################
@@ -96,29 +58,17 @@ promote_rule{N,A,B}(::Type{PartialsTup{N,A}}, ::Type{PartialsTup{N,B}}) = Partia
     return Partials(add_tuples(data(a), data(b)))
 end
 
-function +{A,B}(a::PartialsVec{A}, b::PartialsVec{B})
-    return Partials(data(a) + data(b))
-end
-
 @inline function -{N,A,B}(a::PartialsTup{N,A}, b::PartialsTup{N,B})
     return Partials(subtract_tuples(data(a), data(b)))
 end
 
-function -{A,B}(a::PartialsVec{A}, b::PartialsVec{B})
-    return Partials(data(a) - data(b))
-end
 
 @inline -{N,T}(partials::PartialsTup{N,T}) = Partials(minus_tuple(data(partials)))
--{T}(partials::PartialsVec{T}) = Partials(-data(partials))
 
 # Multiplication #
 #----------------#
 @inline function *{N,T}(partials::PartialsTup{N,T}, x::Number)
     return Partials(scale_tuple(data(partials), x))
-end
-
-function *{T}(partials::PartialsVec{T}, x::Number)
-    return Partials(data(partials)*x)
 end
 
 @inline *(x::Number, partials::Partials) = partials*x
@@ -128,11 +78,6 @@ function _load_mul_partials!(result::Vector, a, b, afactor, bfactor)
         @inbounds result[i] = (afactor * a[i]) + (bfactor * b[i])
     end
     return result
-end
-
-function _mul_partials{A,B,C,D}(a::PartialsVec{A}, b::PartialsVec{B}, afactor::C, bfactor::D)
-    T = promote_type(A, B, C, D)
-    return Partials(_load_mul_partials!(Vector{T}(length(a)), a, b, afactor, bfactor))
 end
 
 @inline function _mul_partials{N,A,B}(a::PartialsTup{N,A}, b::PartialsTup{N,B}, afactor, bfactor)
@@ -145,9 +90,6 @@ end
     return Partials(div_tuple_by_scalar(data(partials), x))
 end
 
-function /{T}(partials::PartialsVec{T}, x::Number)
-    return Partials(data(partials) / x)
-end
 
 @inline function _div_partials(a::Partials, b::Partials, aval, bval)
     afactor = inv(bval)
@@ -156,7 +98,7 @@ end
 end
 
 ##################################
-# Generated Functions on NTuples #
+# Generated Functions on Vecs #
 ##################################
 # The below functions are generally
 # equivalent to directly mapping over
@@ -171,42 +113,32 @@ function tupexpr(f,N)
     end
 end
 
-@inline zero_tuple(::Type{Tuple{}}) = tuple()
-
-@generated function zero_tuple{N,T}(::Type{NTuple{N,T}})
-    result = tupexpr(i -> :z, N)
-    return quote
-        z = zero($T)
-        return $result
-    end
+function zero_tuple{N,T}(tup::Type{Vec{N,T}})
+    return SIMD.create(tup, zero(T))
 end
 
 @inline rand_tuple(::Type{Tuple{}}) = tuple()
 
-@generated function rand_tuple{N,T}(::Type{NTuple{N,T}})
-    return tupexpr(i -> :(rand($T)), N)
+function scale_tuple{N, T}(tup::Vec{N, T}, x)
+    return SIMD.create(Vec{N, T}, T(x)) * tup
 end
 
-@generated function scale_tuple{N}(tup::NTuple{N}, x)
-    return tupexpr(i -> :(tup[$i] * x), N)
+function div_tuple_by_scalar{N, T}(tup::Vec{N, T}, x)
+    return tup / SIMD.create(Vec{N, T}, T(x))
 end
 
-@generated function div_tuple_by_scalar{N}(tup::NTuple{N}, x)
-    return tupexpr(i -> :(tup[$i]/x), N)
+function minus_tuple{N}(tup::Vec{N})
+    return -tup
 end
 
-@generated function minus_tuple{N}(tup::NTuple{N})
-    return tupexpr(i -> :(-tup[$i]), N)
+function subtract_tuples{N}(a::Vec{N}, b::Vec{N})
+    return b - a
 end
 
-@generated function subtract_tuples{N}(a::NTuple{N}, b::NTuple{N})
-    return tupexpr(i -> :(a[$i]-b[$i]), N)
+function add_tuples{N}(a::Vec{N}, b::Vec{N})
+    return a + b
 end
 
-@generated function add_tuples{N}(a::NTuple{N}, b::NTuple{N})
-    return tupexpr(i -> :(a[$i]+b[$i]), N)
-end
-
-@generated function mul_tuples{N}(a::NTuple{N}, b::NTuple{N}, afactor, bfactor)
-    return tupexpr(i -> :((afactor * a[$i]) + (bfactor * b[$i])), N)
+function mul_tuples{N, T}(a::Vec{N, T}, b::Vec{N, T}, afactor, bfactor)
+    return SIMD.create(Vec{N, T}, T(afactor)) * a + SIMD.create(Vec{N, T}, T(bfactor)) * b
 end

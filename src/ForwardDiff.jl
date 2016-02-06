@@ -2,6 +2,8 @@ isdefined(Base, :__precompile__) && __precompile__()
 
 module ForwardDiff
 
+    using SIMD
+
     if VERSION < v"0.4-"
         warn("ForwardDiff.jl is only officially compatible with Julia v0.4-. You're currently running Julia $VERSION.")
     end
