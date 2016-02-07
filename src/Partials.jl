@@ -73,7 +73,7 @@ end
 
 @inline *(x::Number, partials::Partials) = partials*x
 
-function _load_mul_partials!(result::Vector, a, b, afactor, bfactor)
+function _load_mul_partilas!(result::Vector, a, b, afactor, bfactor)
     @simd for i in eachindex(result)
         @inbounds result[i] = (afactor * a[i]) + (bfactor * b[i])
     end
@@ -120,11 +120,11 @@ end
 @inline rand_tuple(::Type{Tuple{}}) = tuple()
 
 function scale_tuple{N, T}(tup::Vec{N, T}, x)
-    return SIMD.create(Vec{N, T}, T(x)) * tup
+    return x * tup
 end
 
 function div_tuple_by_scalar{N, T}(tup::Vec{N, T}, x)
-    return tup / SIMD.create(Vec{N, T}, T(x))
+    return tup / x
 end
 
 function minus_tuple{N}(tup::Vec{N})
@@ -140,5 +140,5 @@ function add_tuples{N}(a::Vec{N}, b::Vec{N})
 end
 
 function mul_tuples{N, T}(a::Vec{N, T}, b::Vec{N, T}, afactor, bfactor)
-    return SIMD.create(Vec{N, T}, T(afactor)) * a + SIMD.create(Vec{N, T}, T(bfactor)) * b
+    return afactor * a + bfactor * b
 end
