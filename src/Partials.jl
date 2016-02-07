@@ -73,7 +73,7 @@ end
 
 @inline *(x::Number, partials::Partials) = partials*x
 
-function _load_mul_partilas!(result::Vector, a, b, afactor, bfactor)
+function _load_mul_partials!(result::Vector, a, b, afactor, bfactor)
     @simd for i in eachindex(result)
         @inbounds result[i] = (afactor * a[i]) + (bfactor * b[i])
     end
