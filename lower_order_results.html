@@ -31,8 +31,8 @@
 
   
     <link rel="top" title="ForwardDiff.jl 0.1.0 documentation" href="index.html"/>
-        <link rel="next" title="Caching Options" href="caching.html"/>
-        <link rel="prev" title="Chunk-mode vs. Vector-mode" href="chunk_vec_modes.html"/> 
+        <link rel="next" title="Upgrading from ForwardDiff v0.1 to v0.2" href="upgrade.html"/>
+        <link rel="prev" title="Configuring Partial Derivative Chunks" href="chunk.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -74,64 +74,46 @@
               <p class="caption"><span class="caption-text">User Documentation</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation and Version Requirements</a></li>
-<li class="toctree-l1"><a class="reference internal" href="perf_diff.html">Performing Differentiation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="perf_diff.html#restrictions-on-the-target-function">Restrictions on the target function</a></li>
-<li class="toctree-l2"><a class="reference internal" href="perf_diff.html#derivatives">Derivatives</a></li>
-<li class="toctree-l2"><a class="reference internal" href="perf_diff.html#gradients">Gradients</a></li>
-<li class="toctree-l2"><a class="reference internal" href="perf_diff.html#jacobians">Jacobians</a></li>
-<li class="toctree-l2"><a class="reference internal" href="perf_diff.html#hessians">Hessians</a></li>
-<li class="toctree-l2"><a class="reference internal" href="perf_diff.html#tensors">Tensors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">ForwardDiff API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api.html#restrictions-on-the-target-function">Restrictions on the target function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#derivatives-of">Derivatives of <span class="math">\(f(x) : \mathbb{R} \to \mathbb{R}^{n_1} \times \dots \times \mathbb{R}^{n_k}\)</span></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#gradients-of">Gradients of <span class="math">\(f(x) : \mathbb{R}^n \to \mathbb{R}\)</span></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#jacobians-of">Jacobians of <span class="math">\(f(x) : \mathbb{R}^n \to \mathbb{R}^m\)</span></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#hessians-of">Hessians of <span class="math">\(f(x) : \mathbb{R}^n \to \mathbb{R}\)</span></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="chunk_vec_modes.html">Chunk-mode vs. Vector-mode</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="chunk_vec_modes.html#what-are-these-modes">What are these modes?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="chunk_vec_modes.html#how-do-i-use-these-modes">How do I use these modes?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="chunk_vec_modes.html#what-mode-chunk-size-should-i-use">What mode/<code class="docutils literal"><span class="pre">chunk_size</span></code> should I use?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chunk.html">Configuring Partial Derivative Chunks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="chunk.html#what-chunk-size-should-i-use">What chunk size should I use?</a></li>
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Accessing Lower-Order Results</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#the-wrong-way">The Wrong Way</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#the-right-way">The Right Way</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#what-you-can-extract-from-a-forwarddiffresult">What You Can Extract from a <code class="docutils literal"><span class="pre">ForwardDiffResult</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="caching.html">Caching Options</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="caching.html#when-does-caching-matter">When Does Caching Matter?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="caching.html#manual-caching">Manual Caching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upgrade.html">Upgrading from ForwardDiff v0.1 to v0.2</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="upgrade.html#setting-chunk-size">Setting Chunk Size</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upgrade.html#retrieving-lower-order-results">Retrieving Lower-Order Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upgrade.html#creating-differentiation-functions">Creating Differentiation Functions</a></li>
 </ul>
 </li>
 </ul>
 <p class="caption"><span class="caption-text">Developer Documentation</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="how_it_works.html">Overview: How ForwardDiff.jl Works</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="how_it_works.html#new-number-types">New Number Types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="how_it_works.html#forwarddiff-jl-s-api">ForwardDiff.jl&#8217;s API</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="types.html"><code class="docutils literal"><span class="pre">ForwardDiffNumber</span></code> Types</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="types.html#partials-t-c"><code class="docutils literal"><span class="pre">Partials{T,C}</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="types.html#gradientnumber-n-t-c"><code class="docutils literal"><span class="pre">GradientNumber{N,T,C}</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="types.html#hessiannumber-n-t-c"><code class="docutils literal"><span class="pre">HessianNumber{N,T,C}</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="types.html#tensornumber-n-t-c"><code class="docutils literal"><span class="pre">TensorNumber{N,T,C}</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_it_works.html">How ForwardDiff Works</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="how_it_works.html#dual-number-implementation">Dual Number Implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="how_it_works.html#forwarddiff-s-api">ForwardDiff&#8217;s API</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">How to Contribute</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="contributing.html#manually-optimizing-unary-functions">Manually Optimizing Unary Functions</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="contributing.html#pick-a-function-to-optimize">1. Pick a function to optimize</a></li>
-<li class="toctree-l3"><a class="reference internal" href="contributing.html#write-out-the-function-s-first-second-and-third-derivatives">2. Write out the function&#8217;s first, second, and third derivatives</a></li>
-<li class="toctree-l3"><a class="reference internal" href="contributing.html#write-and-optimize-a-test-function-to-compute-the-derivatives">3. Write and optimize a test function to compute the derivatives</a></li>
-<li class="toctree-l3"><a class="reference internal" href="contributing.html#implement-the-function-on-the-forwarddiffnumber-types">3. Implement the function on the <code class="docutils literal"><span class="pre">ForwardDiffNumber</span></code> types</a></li>
-<li class="toctree-l3"><a class="reference internal" href="contributing.html#run-tests">4. Run Tests</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#manually-optimizing-unary-functions">Manually Optimizing Unary Functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="contributing.html#implementing-new-functions">Implementing New Functions</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="contributing.html#unary-functions-via-calculus-jl">Unary Functions Via Calculus.jl</a></li>
-<li class="toctree-l3"><a class="reference internal" href="contributing.html#manually-adding-functions-to-forwarddiff-jl">Manually Adding Functions to ForwardDiff.jl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contributing.html#manually-adding-functions-to-forwarddiff">Manually Adding Functions to ForwardDiff</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="why_julia.html">Why Julia?</a></li>
 </ul>
 
           
@@ -173,14 +155,15 @@
 <h1>Accessing Lower-Order Results<a class="headerlink" href="#accessing-lower-order-results" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="the-wrong-way">
 <h2>The Wrong Way<a class="headerlink" href="#the-wrong-way" title="Permalink to this headline">¶</a></h2>
-<p>Let&#8217;s say you want to calculate the value, gradient, and Hessian of some function <code class="docutils literal"><span class="pre">f</span></code> at an input <code class="docutils literal"><span class="pre">x</span></code>.</p>
-<p>You might simply do the following:</p>
-<div class="highlight-julia"><div class="highlight"><pre><span class="n">julia</span><span class="o">&gt;</span> <span class="k">import</span> <span class="n">ForwardDiff</span>
+<p>Let&#8217;s say you want to calculate the value, gradient, and Hessian of some function <code class="docutils literal"><span class="pre">f</span></code> at
+an input <code class="docutils literal"><span class="pre">x</span></code>. Here&#8217;s the <strong>wrong way</strong> to do it:</p>
+<div class="highlight-julia"><div class="highlight"><pre><span class="n">julia</span><span class="o">&gt;</span> <span class="k">using</span> <span class="n">ForwardDiff</span>
 
 <span class="c"># a silly example function</span>
-<span class="n">julia</span><span class="o">&gt;</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">::</span><span class="n">Vector</span><span class="p">)</span> <span class="o">=</span> <span class="n">sum</span><span class="p">(</span><span class="n">sin</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">prod</span><span class="p">(</span><span class="n">tan</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">sum</span><span class="p">(</span><span class="n">sqrt</span><span class="p">,</span> <span class="n">x</span><span class="p">);</span>
+<span class="n">julia</span><span class="o">&gt;</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="n">sum</span><span class="p">(</span><span class="n">sin</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">prod</span><span class="p">(</span><span class="n">tan</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">sum</span><span class="p">(</span><span class="n">sqrt</span><span class="p">,</span> <span class="n">x</span><span class="p">);</span>
 
-<span class="n">julia</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">rand</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span> <span class="c"># a silly input vector</span>
+<span class="c"># a silly input vector</span>
+<span class="n">julia</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">rand</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
 
 <span class="n">julia</span><span class="o">&gt;</span> <span class="n">val</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 <span class="mf">6.8401101379076685</span>
@@ -200,115 +183,60 @@
  <span class="mf">21.9039</span>  <span class="mf">19.1668</span>  <span class="mf">19.6656</span>  <span class="mf">23.4095</span>
 </pre></div>
 </div>
-<p><strong>The above is actually a horribly redundant way to accomplish this task!</strong> This is because, in the course of calculating higher-order derivatives, <strong>ForwardDiff.jl ends up calculating all the lower-order derivatives anyway.</strong></p>
+<p><strong>The above is a horribly redundant way to accomplish this task!</strong> In the course of
+calculating higher-order derivatives, ForwardDiff ends up calculating all the lower-order
+derivatives and original value <code class="docutils literal"><span class="pre">f(x)</span></code>. In the following section, we&#8217;ll see how we can
+use <code class="docutils literal"><span class="pre">ForwardDiffResult</span></code> types to efficiently access these results.</p>
 </div>
 <div class="section" id="the-right-way">
 <h2>The Right Way<a class="headerlink" href="#the-right-way" title="Permalink to this headline">¶</a></h2>
-<p>You can pass the abstract type <code class="docutils literal"><span class="pre">AllResults</span></code> to a differentiation method in order to return a &#8220;package&#8221; of all the lower-order calculations along with the normal result of the method.</p>
-<p>Let&#8217;s use the situation from the previous section as an example. Here&#8217;s the <em>right</em> way to get the Hessian and all the lower-order values:</p>
-<div class="highlight-julia"><div class="highlight"><pre><span class="n">julia</span><span class="o">&gt;</span> <span class="n">hess</span><span class="p">,</span> <span class="n">allresults</span> <span class="o">=</span> <span class="n">ForwardDiff</span><span class="o">.</span><span class="n">hessian</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">ForwardDiff</span><span class="o">.</span><span class="n">AllResults</span><span class="p">);</span>
+<p>To retrieve all the lower-order calculations along with the normal result of an API
+function, pass an instance of the appropriate <code class="docutils literal"><span class="pre">ForwardDiffResult</span></code> type to the in-place
+version of the function. Let&#8217;s use the situation from the previous section as an example.
+Here&#8217;s the <em>right</em> way to get the Hessian and all the lower-order values:</p>
+<div class="highlight-julia"><div class="highlight"><pre><span class="n">julia</span><span class="o">&gt;</span> <span class="k">using</span> <span class="n">ForwardDiff</span>
 
-<span class="n">julia</span><span class="o">&gt;</span> <span class="n">hess</span>
-<span class="mi">4</span><span class="n">x4</span> <span class="n">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span><span class="mi">2</span><span class="p">}:</span>
- <span class="mf">13.082</span>   <span class="mf">21.2597</span>  <span class="mf">21.8144</span>  <span class="mf">21.9039</span>
- <span class="mf">21.2597</span>  <span class="mf">18.9436</span>  <span class="mf">19.0885</span>  <span class="mf">19.1668</span>
- <span class="mf">21.8144</span>  <span class="mf">19.0885</span>  <span class="mf">22.928</span>   <span class="mf">19.6656</span>
- <span class="mf">21.9039</span>  <span class="mf">19.1668</span>  <span class="mf">19.6656</span>  <span class="mf">23.4095</span>
+<span class="n">julia</span><span class="o">&gt;</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="n">sum</span><span class="p">(</span><span class="n">sin</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">prod</span><span class="p">(</span><span class="n">tan</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">sum</span><span class="p">(</span><span class="n">sqrt</span><span class="p">,</span> <span class="n">x</span><span class="p">);</span>
 
-<span class="n">julia</span><span class="o">&gt;</span> <span class="n">val</span> <span class="o">=</span> <span class="n">ForwarDiff</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">allresults</span><span class="p">)</span>
-<span class="mf">6.8401101379076685</span>
+<span class="n">julia</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">rand</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
 
-<span class="n">julia</span><span class="o">&gt;</span> <span class="n">grad</span> <span class="o">=</span> <span class="n">ForwardDiff</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">allresults</span><span class="p">)</span>
-<span class="mi">4</span><span class="o">-</span><span class="n">element</span> <span class="n">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span><span class="mi">1</span><span class="p">}:</span>
- <span class="mf">10.7476</span>
-  <span class="mf">9.32271</span>
-  <span class="mf">9.47858</span>
-  <span class="mf">9.50792</span>
+<span class="n">julia</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="n">HessianResult</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="n">julia</span><span class="o">&gt;</span> <span class="n">ForwardDiff</span><span class="o">.</span><span class="n">hessian</span><span class="o">!</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">x</span><span class="p">);</span>
+
+<span class="n">julia</span><span class="o">&gt;</span> <span class="n">ForwardDiff</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">==</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">true</span>
+
+<span class="n">julia</span><span class="o">&gt;</span> <span class="n">ForwardDiff</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">==</span> <span class="n">ForwardDiff</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+<span class="n">true</span>
+
+<span class="n">julia</span><span class="o">&gt;</span> <span class="n">ForwardDiff</span><span class="o">.</span><span class="n">hessian</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">==</span> <span class="n">ForwardDiff</span><span class="o">.</span><span class="n">hessian</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+<span class="n">true</span>
 </pre></div>
 </div>
-<p>As you can see, passing <code class="docutils literal"><span class="pre">AllResults</span></code> to <code class="docutils literal"><span class="pre">hessian</span></code> causes it to return two objects instead of one. The first is simply the Hessian that you&#8217;d normally expect, but the second is quite different. It&#8217;s an instance of the <code class="docutils literal"><span class="pre">ForwardDiffResult</span></code> type, which packages all of the calculation&#8217;s lower-order results for easy access. As the above example demonstrates, lower-order results are obtained by calling the relevant differentation method on the <code class="docutils literal"><span class="pre">ForwardDiffResult</span></code> instance.</p>
-<p>Mutating methods can also be used, if you want to load a result into an existing array:</p>
-<div class="highlight-julia"><div class="highlight"><pre><span class="n">julia</span><span class="o">&gt;</span> <span class="n">output</span> <span class="o">=</span> <span class="n">Array</span><span class="p">(</span><span class="kt">Float64</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
-
-<span class="c"># fill output with the gradient extracted from allresults</span>
-<span class="n">julia</span><span class="o">&gt;</span> <span class="n">ForwardDiff</span><span class="o">.</span><span class="n">gradient</span><span class="o">!</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">allresults</span><span class="p">);</span>
-
-<span class="n">julia</span><span class="o">&gt;</span> <span class="n">output</span>
-<span class="mi">4</span><span class="o">-</span><span class="n">element</span> <span class="n">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span><span class="mi">1</span><span class="p">}:</span>
- <span class="mf">10.7476</span>
-  <span class="mf">9.32271</span>
-  <span class="mf">9.47858</span>
-  <span class="mf">9.50792</span>
+<p>The following accessor methods are available to extract data from <code class="docutils literal"><span class="pre">ForwardDiffResult</span></code> types:</p>
+<div class="highlight-julia"><div class="highlight"><pre><span class="n">ForwardDiff</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">result</span><span class="p">::</span><span class="n">ForwardDiffResult</span><span class="p">)</span>
+<span class="n">ForwardDiff</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">result</span><span class="p">::</span><span class="n">DerivativeResult</span><span class="p">)</span>
+<span class="n">ForwardDiff</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">result</span><span class="p">::</span><span class="n">Union</span><span class="p">{</span><span class="n">GradientResult</span><span class="p">,</span><span class="n">HessianResult</span><span class="p">})</span>
+<span class="n">ForwardDiff</span><span class="o">.</span><span class="n">jacobian</span><span class="p">(</span><span class="n">result</span><span class="p">::</span><span class="n">JacobianResult</span><span class="p">)</span>
+<span class="n">ForwardDiff</span><span class="o">.</span><span class="n">hessian</span><span class="p">(</span><span class="n">result</span><span class="p">::</span><span class="n">HessianResult</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>Here are the various constructors for all the <code class="docutils literal"><span class="pre">ForwardDiffResult</span></code> types (using <code class="docutils literal"><span class="pre">new</span></code> to
+denote the default constructor):</p>
+<div class="highlight-julia"><div class="highlight"><pre><span class="n">DerivativeResult</span><span class="p">(</span><span class="n">value_output</span><span class="p">,</span> <span class="n">derivative_output</span><span class="p">)</span> <span class="o">=</span> <span class="nb">new</span><span class="p">(</span><span class="n">value_output</span><span class="p">,</span> <span class="n">derivative_output</span><span class="p">)</span>
+<span class="n">DerivativeResult</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="n">DerivativeResult</span><span class="p">(</span><span class="n">copy</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">copy</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+<span class="n">GradientResult</span><span class="p">(</span><span class="n">value_output</span><span class="p">,</span> <span class="n">gradient_output</span><span class="p">)</span> <span class="o">=</span> <span class="nb">new</span><span class="p">(</span><span class="n">value_output</span><span class="p">,</span> <span class="n">gradient_output</span><span class="p">)</span>
+<span class="n">GradientResult</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="n">GradientResult</span><span class="p">(</span><span class="n">first</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">similar</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+<span class="n">JacobianResult</span><span class="p">(</span><span class="n">value_output</span><span class="p">,</span> <span class="n">jacobian_output</span><span class="p">)</span> <span class="o">=</span> <span class="nb">new</span><span class="p">(</span><span class="n">value_output</span><span class="p">,</span> <span class="n">jacobian_output</span><span class="p">)</span>
+<span class="n">JacobianResult</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="n">JacobianResult</span><span class="p">(</span><span class="n">similar</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">similar</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">length</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">length</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+
+<span class="n">HessianResult</span><span class="p">(</span><span class="n">value_output</span><span class="p">,</span> <span class="n">gradient_output</span><span class="p">,</span> <span class="n">hessian_output</span><span class="p">)</span> <span class="o">=</span> <span class="nb">new</span><span class="p">(</span><span class="n">value_output</span><span class="p">,</span> <span class="n">gradient_output</span><span class="p">,</span> <span class="n">hessian_output</span><span class="p">)</span>
+<span class="n">HessianResult</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="n">HessianResult</span><span class="p">(</span><span class="n">first</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">similar</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">similar</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">length</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">length</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+</pre></div>
 </div>
-<div class="section" id="what-you-can-extract-from-a-forwarddiffresult">
-<h2>What You Can Extract from a <code class="docutils literal"><span class="pre">ForwardDiffResult</span></code><a class="headerlink" href="#what-you-can-extract-from-a-forwarddiffresult" title="Permalink to this headline">¶</a></h2>
-<p>The below table describes the possible results that can be extracted given the differentiation method used:</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="42%" />
-<col width="58%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">You called the method...</th>
-<th class="head">Available extraction methods for the returned <code class="docutils literal"><span class="pre">ForwardDiffResult</span></code></th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td><p class="first">derivative(f, x, AllResults)</p>
-<p class="last">derivative!(output, f, x, AllResults)</p>
-</td>
-<td><p class="first">value(::ForwardDiffResult)</p>
-<p>value!(::Array, ::ForwardDiffResult)</p>
-<p>derivative(::ForwardDiffResult)</p>
-<p class="last">derivative!(::Array, ::ForwardDiffResult)</p>
-</td>
-</tr>
-<tr class="row-odd"><td><p class="first">ForwardDiff.gradient(f, x, AllResults)</p>
-<p class="last">ForwardDiff.gradient!(output, f, x, AllResults)</p>
-</td>
-<td><p class="first">value(::ForwardDiffResult)</p>
-<p>value!(::Array, ::ForwardDiffResult)</p>
-<p>ForwardDiff.gradient(::ForwardDiffResult)</p>
-<p class="last">ForwardDiff.gradient!(::Array, ::ForwardDiffResult)</p>
-</td>
-</tr>
-<tr class="row-even"><td><p class="first">jacobian(f, x, AllResults)</p>
-<p class="last">jacobian!(output, f, x, AllResults)</p>
-</td>
-<td><p class="first">value(::ForwardDiffResult)</p>
-<p>value!(::Array, ::ForwardDiffResult)</p>
-<p>jacobian(::ForwardDiffResult)</p>
-<p class="last">jacobian!(::Array, ::ForwardDiffResult)</p>
-</td>
-</tr>
-<tr class="row-odd"><td><p class="first">hessian(f, x, AllResults)</p>
-<p class="last">hessian!(output, f, x, AllResults)</p>
-</td>
-<td><p class="first">value(::ForwardDiffResult)</p>
-<p>value!(::Array, ::ForwardDiffResult)</p>
-<p>gradient(::ForwardDiffResult)</p>
-<p>gradient!(::Array, ::ForwardDiffResult)</p>
-<p>hessian(::ForwardDiffResult)</p>
-<p class="last">hessian!(::Array, ::ForwardDiffResult)</p>
-</td>
-</tr>
-<tr class="row-even"><td><p class="first">tensor(f, x, AllResults)</p>
-<p class="last">tensor!(output, f, x, AllResults)</p>
-</td>
-<td><p class="first">value(::ForwardDiffResult)</p>
-<p>value!(::Array, ::ForwardDiffResult)</p>
-<p>gradient(::ForwardDiffResult)</p>
-<p>gradient!(::Array, ::ForwardDiffResult)</p>
-<p>hessian(::ForwardDiffResult)</p>
-<p>hessian!(::Array, ::ForwardDiffResult)</p>
-<p>tensor(::ForwardDiffResult)</p>
-<p class="last">tensor!(::Array, ::ForwardDiffResult)</p>
-</td>
-</tr>
-</tbody>
-</table>
 </div>
 </div>
 
@@ -318,10 +246,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="caching.html" class="btn btn-neutral float-right" title="Caching Options" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="upgrade.html" class="btn btn-neutral float-right" title="Upgrading from ForwardDiff v0.1 to v0.2" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="chunk_vec_modes.html" class="btn btn-neutral" title="Chunk-mode vs. Vector-mode" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="chunk.html" class="btn btn-neutral" title="Configuring Partial Derivative Chunks" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
