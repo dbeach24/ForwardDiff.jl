@@ -92,8 +92,10 @@
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Upgrading from ForwardDiff v0.1 to v0.2</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#unexported-api-functions">Unexported API Functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#setting-chunk-size">Setting Chunk Size</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#retrieving-lower-order-results">Retrieving Lower-Order Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#higher-order-differentiation">Higher-Order Differentiation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#creating-differentiation-functions">Creating Differentiation Functions</a></li>
 </ul>
 </li>
@@ -155,6 +157,20 @@
 <h1>Upgrading from ForwardDiff v0.1 to v0.2<a class="headerlink" href="#upgrading-from-forwarddiff-v0-1-to-v0-2" title="Permalink to this headline">¶</a></h1>
 <p>A few API changes have occured between ForwardDiff v0.1 and v0.2. This document provides
 some examples to help you transform old ForwardDiff code into new ForwardDiff code.</p>
+<div class="section" id="unexported-api-functions">
+<h2>Unexported API Functions<a class="headerlink" href="#unexported-api-functions" title="Permalink to this headline">¶</a></h2>
+<p>In order to avoid namespace conflicts with other packages, <a class="reference external" href="api.html">ForwardDiff&#8217;s API functions</a> are no longer exported by default. Thus, you must now fully qualify the
+functions to reference them:</p>
+<div class="highlight-julia"><div class="highlight"><pre><span class="c"># old way</span>
+<span class="k">using</span> <span class="n">ForwardDiff</span>
+<span class="n">hessian</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+
+<span class="c"># new way</span>
+<span class="k">using</span> <span class="n">ForwardDiff</span>
+<span class="n">ForwardDiff</span><span class="o">.</span><span class="n">hessian</span>
+</pre></div>
+</div>
+</div>
 <div class="section" id="setting-chunk-size">
 <h2>Setting Chunk Size<a class="headerlink" href="#setting-chunk-size" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-julia"><div class="highlight"><pre><span class="c"># old way</span>
@@ -180,6 +196,26 @@ some examples to help you transform old ForwardDiff code into new ForwardDiff co
 <span class="n">v</span> <span class="o">=</span> <span class="n">ForwardDiff</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
 <span class="n">g</span> <span class="o">=</span> <span class="n">ForwardDiff</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
 <span class="n">h</span> <span class="o">=</span> <span class="n">ForwardDiff</span><span class="o">.</span><span class="n">hessian</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="higher-order-differentiation">
+<h2>Higher-Order Differentiation<a class="headerlink" href="#higher-order-differentiation" title="Permalink to this headline">¶</a></h2>
+<p>In order to maintain feature parity between all API functions, ForwardDiff no longer
+provides the <code class="docutils literal"><span class="pre">tensor</span></code> function. Instead, users can take higher-order/higher-dimensional
+derivatives by composing existing API functions. For example, here&#8217;s how to reimplement
+<code class="docutils literal"><span class="pre">tensor</span></code>:</p>
+<div class="highlight-julia"><div class="highlight"><pre><span class="c"># old way</span>
+<span class="n">ForwardDiff</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+
+<span class="c"># new way</span>
+<span class="k">function</span><span class="nf"> tensor</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">ForwardDiff</span><span class="o">.</span><span class="n">jacobian</span><span class="p">(</span><span class="n">y</span> <span class="o">-&gt;</span> <span class="n">ForwardDiff</span><span class="o">.</span><span class="n">hessian</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">reshape</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="n">tensor</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
