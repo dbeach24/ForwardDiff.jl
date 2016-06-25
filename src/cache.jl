@@ -4,16 +4,9 @@
 
 import Base: get!, ht_keyindex2, _setindex!
 
-function get!{K,V}(h::Dict{K,V}, key0, default::Function)
-    key = convert(K,key0)
-    if !isequal(key,key0)
-        throw(ArgumentError("$key0 is not a valid key for type $K"))
-    end
-
+function get!{K,V}(h::Dict{K,V}, key::K, default::Function)
     index = ht_keyindex2(h, key)
-
     index > 0 && return h.vals[index]
-
     v = convert(V,  default())
     _setindex!(h, v, key, -index)
     return v
