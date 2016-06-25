@@ -2,6 +2,23 @@
 # caching for Jacobians and gradients #
 #######################################
 
+import Base: get!, ht_keyindex2, _setindex!
+
+function get!{K,V}(h::Dict{K,V}, key0, default::Function)
+    key = convert(K,key0)
+    if !isequal(key,key0)
+        throw(ArgumentError("$key0 is not a valid key for type $K"))
+    end
+
+    index = ht_keyindex2(h, key)
+
+    index > 0 && return h.vals[index]
+
+    v = convert(V,  default())
+    _setindex!(h, v, key, -index)
+    return v
+end
+
 const JACOBIAN_CACHE = Dict{Tuple{Int,Int,DataType,Bool},Any}()
 
 immutable JacobianCache{N,T}
@@ -23,13 +40,7 @@ end
                                                      usecache::Bool, alt::Bool = false)
     if usecache
         key = (xlen, N, T, alt)
-        if haskey(JACOBIAN_CACHE, key)
-            return JACOBIAN_CACHE[key]::NTuple{$NTHREADS,JacobianCache{N,T}}
-        else
-            allresults = construct_jacobian_caches(T, xlen, chunk)
-            JACOBIAN_CACHE[key] = allresults
-            return allresults::NTuple{$NTHREADS,JacobianCache{N,T}}
-        end
+        return get!(JACOBIAN_CACHE, key, () -> construct_jacobian_caches(T, xlen, chunk))::NTuple{$NTHREADS,JacobianCache{N,T}}
     else
         return construct_jacobian_caches(T, xlen, chunk)::NTuple{$NTHREADS,JacobianCache{N,T}}
     end
