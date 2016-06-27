@@ -3,6 +3,7 @@ isdefined(Base, :__precompile__) && __precompile__()
 module ForwardDiff
 
 using Compat
+using FixedSizeArrays
 
 import Calculus
 import NaNMath

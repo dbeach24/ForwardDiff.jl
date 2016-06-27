@@ -35,7 +35,7 @@ samerng() = MersenneTwister(1)
 
 @test Dual(PRIMAL, PARTIALS...) === FDNUM
 @test typeof(Dual(widen(T)(PRIMAL), PARTIALS)) === Dual{N,widen(T)}
-@test typeof(Dual(widen(T)(PRIMAL), PARTIALS.values)) === Dual{N,widen(T)}
+@test typeof(Dual(widen(T)(PRIMAL), PARTIALS._)) === Dual{N,widen(T)}
 @test typeof(Dual(widen(T)(PRIMAL), PARTIALS...)) === Dual{N,widen(T)}
 @test typeof(NESTED_FDNUM) == Dual{N,Dual{M,T}}
 

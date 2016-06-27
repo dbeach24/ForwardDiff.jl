@@ -19,7 +19,7 @@ samerng() = MersenneTwister(1)
 # Utility/Accessor Functions #
 ##############################
 
-@test PARTIALS.values == VALUES
+@test PARTIALS._ == VALUES
 
 @test ForwardDiff.numtype(PARTIALS) == T
 @test ForwardDiff.numtype(typeof(PARTIALS)) == T
@@ -49,7 +49,7 @@ end
 #####################
 
 @test zero(PARTIALS) == zero(typeof(PARTIALS))
-@test zero(PARTIALS).values == map(zero, VALUES)
+@test zero(PARTIALS)._ == map(zero, VALUES)
 
 @test rand(samerng(), PARTIALS) == rand(samerng(), typeof(PARTIALS))
 
@@ -93,18 +93,18 @@ const WIDE_PARTIALS = convert(Partials{N,WIDE_T}, PARTIALS)
 # Arithmetic Functions #
 ########################
 
-@test (PARTIALS + PARTIALS).values == map(v -> v + v, VALUES)
-@test (PARTIALS - PARTIALS).values == map(v -> v - v, VALUES)
-@test getfield(-(PARTIALS), :values) == map(-, VALUES)
+@test (PARTIALS + PARTIALS)._ == map(v -> v + v, VALUES)
+@test (PARTIALS - PARTIALS)._ == map(v -> v - v, VALUES)
+@test getfield(-(PARTIALS), :_) == map(-, VALUES)
 
 const X = rand()
 const Y = rand()
 
 @test X * PARTIALS == PARTIALS * X
-@test (X * PARTIALS).values == map(v -> X * v, VALUES)
-@test (PARTIALS / X).values == map(v -> v / X, VALUES)
+@test (X * PARTIALS)._ == map(v -> X * v, VALUES)
+@test (PARTIALS / X)._ == map(v -> v / X, VALUES)
 
-@test ForwardDiff._mul_partials(PARTIALS, PARTIALS2, X, Y).values == map((a, b) -> (X * a) + (Y * b), VALUES, VALUES2)
+@test ForwardDiff._mul_partials(PARTIALS, PARTIALS2, X, Y)._ == map((a, b) -> (X * a) + (Y * b), VALUES, VALUES2)
 @test ForwardDiff._div_partials(PARTIALS, PARTIALS2, X, Y) == ForwardDiff._mul_partials(PARTIALS, PARTIALS2, inv(Y), -X/(Y^2))
 
 end # module
