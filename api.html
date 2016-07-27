@@ -193,19 +193,22 @@ calling <code class="docutils literal"><span class="pre">ForwardDiff.derivative(
 <h2>Gradients of <span class="math">\(f(x) : \mathbb{R}^n \to \mathbb{R}\)</span><a class="headerlink" href="#gradients-of" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt>
-<code class="descname">ForwardDiff.gradient!(out, f, x, chunk::Chunk = ForwardDiff.pickchunk(x); multithread = false)</code></dt>
-<dd><p>Compute <span class="math">\(\nabla f(\vec{x})\)</span>, storing the output in <code class="docutils literal"><span class="pre">out</span></code>. If <code class="docutils literal"><span class="pre">length(x)</span></code> is a
-compile-time constant, it is highly advised to explicitly pass in a value for <code class="docutils literal"><span class="pre">chunk</span></code>.
-If <code class="docutils literal"><span class="pre">chunk</span></code> is not provided, ForwardDiff will try to guess an appropriate value based
-on <code class="docutils literal"><span class="pre">x</span></code> (see <a class="reference external" href="chunk.html">the chunk configuration documentation</a>). If <code class="docutils literal"><span class="pre">multithread</span> <span class="pre">=</span>
-<span class="pre">true</span></code>, then leverage multithreading when performing the computation. Note that
-multithreading support is experimental and may result in slowdown in some cases,
-especially for small input dimensions.</p>
+<code class="descname">ForwardDiff.gradient!(out, f, x, chunk::Chunk = ForwardDiff.pickchunk(x); multithread = false, usecache = true)</code></dt>
+<dd><p>Compute <span class="math">\(\nabla f(\vec{x})\)</span>, storing the output in <code class="docutils literal"><span class="pre">out</span></code>.</p>
+<p>If <code class="docutils literal"><span class="pre">length(x)</span></code> is a compile-time constant, it is highly advised to explicitly pass in
+a value for <code class="docutils literal"><span class="pre">chunk</span></code>. If <code class="docutils literal"><span class="pre">chunk</span></code> is not provided, ForwardDiff will try to guess an
+appropriate value based on <code class="docutils literal"><span class="pre">x</span></code> (see <a class="reference external" href="chunk.html">the chunk configuration documentation</a>).</p>
+<p>If <code class="docutils literal"><span class="pre">multithread</span> <span class="pre">=</span> <span class="pre">true</span></code>, then leverage multithreading when performing the computation.
+Note that multithreading support is experimental and may result in slowdown in some
+cases, especially for small input dimensions.</p>
+<p>If <code class="docutils literal"><span class="pre">usecache</span> <span class="pre">=</span> <span class="pre">false</span></code>, then don&#8217;t rely on ForwardDiff&#8217;s cache to store/retrieve
+internally used work arrays. If <code class="docutils literal"><span class="pre">length(x)</span></code> is very small, or you need your
+calculation to be task-safe, then you might benefit from setting <code class="docutils literal"><span class="pre">usecache</span> <span class="pre">=</span> <span class="pre">false</span></code>.</p>
 </dd></dl>
 
 <dl class="function">
 <dt>
-<code class="descname">ForwardDiff.gradient!(out::GradientResult, f, x, chunk::Chunk = ForwardDiff.pickchunk(x); multithread = false)</code></dt>
+<code class="descname">ForwardDiff.gradient!(out::GradientResult, f, x, chunk::Chunk = ForwardDiff.pickchunk(x); multithread = false, usecache = true)</code></dt>
 <dd><p>Compute <span class="math">\(\nabla f(\vec{x})\)</span>. The value of <span class="math">\(f(\vec{x})\)</span> can then be accessed
 by calling <code class="docutils literal"><span class="pre">ForwardDiff.value(out)</span></code>, while <span class="math">\(\nabla f(\vec{x})\)</span> can be accessed
 by calling <code class="docutils literal"><span class="pre">ForwardDiff.gradient(out)</span></code>.</p>
@@ -213,7 +216,7 @@ by calling <code class="docutils literal"><span class="pre">ForwardDiff.gradient
 
 <dl class="function">
 <dt id="ForwardDiff.gradient">
-<code class="descclassname">ForwardDiff.</code><code class="descname">gradient</code><span class="sig-paren">(</span><em>f</em>, <em>x</em>, <em>chunk::Chunk = ForwardDiff.pickchunk(x); multithread = false</em><span class="sig-paren">)</span><a class="headerlink" href="#ForwardDiff.gradient" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">ForwardDiff.</code><code class="descname">gradient</code><span class="sig-paren">(</span><em>f</em>, <em>x</em>, <em>chunk::Chunk = ForwardDiff.pickchunk(x); multithread = false</em>, <em>usecache = true</em><span class="sig-paren">)</span><a class="headerlink" href="#ForwardDiff.gradient" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute and return <span class="math">\(\nabla f(\vec{x})\)</span>.</p>
 </dd></dl>
 
@@ -222,16 +225,19 @@ by calling <code class="docutils literal"><span class="pre">ForwardDiff.gradient
 <h2>Jacobians of <span class="math">\(f(x) : \mathbb{R}^n \to \mathbb{R}^m\)</span><a class="headerlink" href="#jacobians-of" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt>
-<code class="descname">ForwardDiff.jacobian!(out, f, x, chunk::Chunk = ForwardDiff.pickchunk(x))</code></dt>
-<dd><p>Compute <span class="math">\(\mathbf{J}(f)(\vec{x})\)</span>, storing the output in <code class="docutils literal"><span class="pre">out</span></code>. If <code class="docutils literal"><span class="pre">length(x)</span></code>
-is a compile-time constant, it is highly advised to explicitly pass in a value for
-<code class="docutils literal"><span class="pre">chunk</span></code>. If <code class="docutils literal"><span class="pre">chunk</span></code> is not provided, ForwardDiff will try to guess an appropriate
-value based on <code class="docutils literal"><span class="pre">x</span></code> (see <a class="reference external" href="chunk.html">the chunk configuration documentation</a>).</p>
+<code class="descname">ForwardDiff.jacobian!(out, f, x, chunk::Chunk = ForwardDiff.pickchunk(x); usecache = true)</code></dt>
+<dd><p>Compute <span class="math">\(\mathbf{J}(f)(\vec{x})\)</span>, storing the output in <code class="docutils literal"><span class="pre">out</span></code>.</p>
+<p>If <code class="docutils literal"><span class="pre">length(x)</span></code> is a compile-time constant, it is highly advised to explicitly pass in
+a value for <code class="docutils literal"><span class="pre">chunk</span></code>. If <code class="docutils literal"><span class="pre">chunk</span></code> is not provided, ForwardDiff will try to guess an
+appropriate value based on <code class="docutils literal"><span class="pre">x</span></code> (see <a class="reference external" href="chunk.html">the chunk configuration documentation</a>).</p>
+<p>If <code class="docutils literal"><span class="pre">usecache</span> <span class="pre">=</span> <span class="pre">false</span></code>, then don&#8217;t rely on ForwardDiff&#8217;s cache to store/retrieve
+internally used work arrays. If <code class="docutils literal"><span class="pre">length(x)</span></code> is very small, or you need your
+calculation to be task-safe, then you might benefit from setting <code class="docutils literal"><span class="pre">usecache</span> <span class="pre">=</span> <span class="pre">false</span></code>.</p>
 </dd></dl>
 
 <dl class="function">
 <dt>
-<code class="descname">ForwardDiff.jacobian!(out, f!, y, x, chunk::Chunk = ForwardDiff.pickchunk(x))</code></dt>
+<code class="descname">ForwardDiff.jacobian!(out, f!, y, x, chunk::Chunk = ForwardDiff.pickchunk(x); usecache = true)</code></dt>
 <dd><p>Compute <span class="math">\(\mathbf{J}(f)(\vec{x})\)</span>, where <span class="math">\(f(\vec{x})\)</span> can be called as
 <code class="docutils literal"><span class="pre">f!(y,</span> <span class="pre">x)</span></code> such that the output of <span class="math">\(f(\vec{x})\)</span> is stored in <code class="docutils literal"><span class="pre">y</span></code>. The output
 matrix is stored in <code class="docutils literal"><span class="pre">out</span></code>.</p>
@@ -239,7 +245,7 @@ matrix is stored in <code class="docutils literal"><span class="pre">out</span><
 
 <dl class="function">
 <dt>
-<code class="descname">ForwardDiff.jacobian!(out::JacobianResult, f!, x, chunk::Chunk = ForwardDiff.pickchunk(x))</code></dt>
+<code class="descname">ForwardDiff.jacobian!(out::JacobianResult, f!, x, chunk::Chunk = ForwardDiff.pickchunk(x); usecache = true)</code></dt>
 <dd><p>Compute <span class="math">\(\mathbf{J}(f)(\vec{x})\)</span>, where <span class="math">\(f(\vec{x})\)</span> can be called as
 <code class="docutils literal"><span class="pre">f!(ForwardDiff.value(out),</span> <span class="pre">x)</span></code> such that the output of <span class="math">\(f(\vec{x})\)</span> is stored
 in <code class="docutils literal"><span class="pre">ForwardDiff.value(out)</span></code>. The output matrix can then be accessed by calling
@@ -248,13 +254,13 @@ in <code class="docutils literal"><span class="pre">ForwardDiff.value(out)</span
 
 <dl class="function">
 <dt id="ForwardDiff.jacobian">
-<code class="descclassname">ForwardDiff.</code><code class="descname">jacobian</code><span class="sig-paren">(</span><em>f</em>, <em>x</em>, <em>chunk::Chunk = ForwardDiff.pickchunk(x)</em><span class="sig-paren">)</span><a class="headerlink" href="#ForwardDiff.jacobian" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">ForwardDiff.</code><code class="descname">jacobian</code><span class="sig-paren">(</span><em>f</em>, <em>x</em>, <em>chunk::Chunk = ForwardDiff.pickchunk(x); usecache = true</em><span class="sig-paren">)</span><a class="headerlink" href="#ForwardDiff.jacobian" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute and return <span class="math">\(\mathbf{J}(f)(\vec{x})\)</span>.</p>
 </dd></dl>
 
 <dl class="function">
 <dt>
-<code class="descclassname">ForwardDiff.</code><code class="descname">jacobian</code><span class="sig-paren">(</span><em>f!</em>, <em>y</em>, <em>x</em>, <em>chunk::Chunk = ForwardDiff.pickchunk(x)</em><span class="sig-paren">)</span></dt>
+<code class="descclassname">ForwardDiff.</code><code class="descname">jacobian</code><span class="sig-paren">(</span><em>f!</em>, <em>y</em>, <em>x</em>, <em>chunk::Chunk = ForwardDiff.pickchunk(x); usecache = true</em><span class="sig-paren">)</span></dt>
 <dd><p>Compute and return <span class="math">\(\mathbf{J}(f)(\vec{x})\)</span>, where <span class="math">\(f(\vec{x})\)</span> can be
 called as <code class="docutils literal"><span class="pre">f!(y,</span> <span class="pre">x)</span></code> such that the output of <span class="math">\(f(\vec{x})\)</span> is stored in <code class="docutils literal"><span class="pre">y</span></code>.</p>
 </dd></dl>
@@ -264,16 +270,22 @@ called as <code class="docutils literal"><span class="pre">f!(y,</span> <span cl
 <h2>Hessians of <span class="math">\(f(x) : \mathbb{R}^n \to \mathbb{R}\)</span><a class="headerlink" href="#hessians-of" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt>
-<code class="descname">ForwardDiff.hessian!(out, f, x, chunk::Chunk = ForwardDiff.pickchunk(x))</code></dt>
-<dd><p>Compute <span class="math">\(\mathbf{H}(f)(\vec{x})\)</span>, storing the output in <code class="docutils literal"><span class="pre">out</span></code>. If <code class="docutils literal"><span class="pre">length(x)</span></code>
-is a compile-time constant, it is highly advised to explicitly pass in a value for
-<code class="docutils literal"><span class="pre">chunk</span></code>. If <code class="docutils literal"><span class="pre">chunk</span></code> is not provided, ForwardDiff will try to guess an appropriate
-value based on <code class="docutils literal"><span class="pre">x</span></code> (see <a class="reference external" href="chunk.html">the chunk configuration documentation</a>).</p>
+<code class="descname">ForwardDiff.hessian!(out, f, x, chunk::Chunk = ForwardDiff.pickchunk(x); multithread = false, usecache = true)</code></dt>
+<dd><p>Compute <span class="math">\(\mathbf{H}(f)(\vec{x})\)</span>, storing the output in <code class="docutils literal"><span class="pre">out</span></code>.</p>
+<p>If <code class="docutils literal"><span class="pre">length(x)</span></code> is a compile-time constant, it is highly advised to explicitly pass in
+a value for <code class="docutils literal"><span class="pre">chunk</span></code>. If <code class="docutils literal"><span class="pre">chunk</span></code> is not provided, ForwardDiff will try to guess an
+appropriate value based on <code class="docutils literal"><span class="pre">x</span></code> (see <a class="reference external" href="chunk.html">the chunk configuration documentation</a>).</p>
+<p>If <code class="docutils literal"><span class="pre">multithread</span> <span class="pre">=</span> <span class="pre">true</span></code>, then leverage multithreading when performing the computation.
+Note that multithreading support is experimental and may result in slowdown in some
+cases, especially for small input dimensions.</p>
+<p>If <code class="docutils literal"><span class="pre">usecache</span> <span class="pre">=</span> <span class="pre">false</span></code>, then don&#8217;t rely on ForwardDiff&#8217;s cache to store/retrieve
+internally used work arrays. If <code class="docutils literal"><span class="pre">length(x)</span></code> is very small, or you need your
+calculation to be task-safe, then you might benefit from setting <code class="docutils literal"><span class="pre">usecache</span> <span class="pre">=</span> <span class="pre">false</span></code>.</p>
 </dd></dl>
 
 <dl class="function">
 <dt>
-<code class="descname">ForwardDiff.hessian!(out::HessianResult, f, x, chunk::Chunk = ForwardDiff.pickchunk(x); multithread = false)</code></dt>
+<code class="descname">ForwardDiff.hessian!(out::HessianResult, f, x, chunk::Chunk = ForwardDiff.pickchunk(x); multithread = false, usecache = true)</code></dt>
 <dd><p>Compute <span class="math">\(\mathbf{H}(f)(\vec{x})\)</span>. The value of <span class="math">\(f(\vec{x})\)</span> can then be
 accessed by calling <code class="docutils literal"><span class="pre">ForwardDiff.value(out)</span></code>, <span class="math">\(\nabla f(\vec{x})\)</span> can be
 accessed by calling <code class="docutils literal"><span class="pre">ForwardDiff.gradient(out)</span></code>, and <span class="math">\(\mathbf{H}(f)(\vec{x})\)</span>
@@ -282,7 +294,7 @@ can be accessed by calling <code class="docutils literal"><span class="pre">Forw
 
 <dl class="function">
 <dt id="ForwardDiff.hessian">
-<code class="descclassname">ForwardDiff.</code><code class="descname">hessian</code><span class="sig-paren">(</span><em>f</em>, <em>x</em>, <em>chunk::Chunk = ForwardDiff.pickchunk(x)</em><span class="sig-paren">)</span><a class="headerlink" href="#ForwardDiff.hessian" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">ForwardDiff.</code><code class="descname">hessian</code><span class="sig-paren">(</span><em>f</em>, <em>x</em>, <em>chunk::Chunk = ForwardDiff.pickchunk(x); multithread = false</em>, <em>usecache = true</em><span class="sig-paren">)</span><a class="headerlink" href="#ForwardDiff.hessian" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute and return <span class="math">\(\mathbf{H}(f)(\vec{x})\)</span>.</p>
 </dd></dl>
 
