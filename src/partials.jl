@@ -1,10 +1,45 @@
-immutable Partials{N,T}
-    values::NTuple{N,T}
+const VECEL_ENABLED = VERSION >= v"0.5"
+
+if VECEL_ENABLED
+
+    immutable Partials{N,T}
+        values::NTuple{N,VecElement{T}}
+    end
+
+else
+
+    immutable Partials{N,T}
+        values::NTuple{N,T}
+    end
+
 end
 
 ##############################
 # Utility/Accessor Functions #
 ##############################
+
+if VECEL_ENABLED
+
+    # unwrap from VecElement
+    @inline getval(x) = x
+    @inline getval(x::VecElement) = x.value
+    @inline getval{N}(x::NTuple{N,VecElement}) = map(getval, x)
+
+    # wrap in VecElement
+    @inline vecel(x) = VecElement(x)
+    @inline vecel(x::VecElement) = x
+    @inline vecel(x::NTuple) = map(vecel, x)
+
+else
+
+    @inline getval(x) = x
+    @inline vecel(x) = x
+
+end
+
+@inline Partials{N,T}(values::NTuple{N,T}) = Partials{N,T}(vecel(values))
+
+@inline values(partials::Partials) = getval(partials.values)
 
 @inline numtype{N,T}(::Partials{N,T}) = T
 @inline numtype{N,T}(::Type{Partials{N,T}}) = T
@@ -14,18 +49,18 @@ end
 
 @inline Base.length{N}(::Partials{N}) = N
 
-@inline Base.getindex(partials::Partials, i) = partials.values[i]
+@inline Base.getindex(partials::Partials, i) = getval(partials.values[i])
 setindex{N,T}(partials::Partials{N,T}, v, i) = Partials{N,T}((partials[1:i-1]..., v, partials[i+1:N]...))
 
-Base.start(partials::Partials) = start(partials.values)
-Base.next(partials::Partials, i) = next(partials.values, i)
-Base.done(partials::Partials, i) = done(partials.values, i)
+@inline Base.start(partials::Partials) = 1
+@inline Base.next(partials::Partials, i) = (getval(partials.values[i]), i+1)
+@inline Base.done(partials::Partials, i) = i > length(partials.values)
 
 #####################
 # Generic Functions #
 #####################
 
-@inline iszero(partials::Partials) = iszero_tuple(partials.values)
+@inline iszero(partials::Partials) = iszero_tuple(values(partials))
 
 @inline Base.zero(partials::Partials) = zero(typeof(partials))
 @inline Base.zero{N,T}(::Type{Partials{N,T}}) = Partials{N,T}(zero_tuple(NTuple{N,T}))
@@ -38,12 +73,12 @@ Base.done(partials::Partials, i) = done(partials.values, i)
 @inline Base.rand(rng::AbstractRNG, partials::Partials) = rand(rng, typeof(partials))
 @inline Base.rand{N,T}(rng::AbstractRNG, ::Type{Partials{N,T}}) = Partials{N,T}(rand_tuple(rng, NTuple{N,T}))
 
-Base.isequal{N}(a::Partials{N}, b::Partials{N}) = isequal(a.values, b.values)
-@compat(Base.:(==)){N}(a::Partials{N}, b::Partials{N}) = a.values == b.values
+Base.isequal{N}(a::Partials{N}, b::Partials{N}) = isequal(values(a), values(b))
+@compat(Base.:(==)){N}(a::Partials{N}, b::Partials{N}) = values(a) == values(b)
 
 const PARTIALS_HASH = hash(Partials)
 
-Base.hash(partials::Partials) = hash(partials.values, PARTIALS_HASH)
+Base.hash(partials::Partials) = hash(values(partials), PARTIALS_HASH)
 Base.hash(partials::Partials, hsh::UInt64) = hash(hash(partials), hsh)
 
 @inline Base.copy(partials::Partials) = partials
@@ -62,7 +97,7 @@ end
 
 Base.promote_rule{N,A,B}(::Type{Partials{N,A}}, ::Type{Partials{N,B}}) = Partials{N,promote_type(A, B)}
 
-Base.convert{N,T}(::Type{Partials{N,T}}, partials::Partials) = Partials{N,T}(partials.values)
+Base.convert{N,T}(::Type{Partials{N,T}}, partials::Partials) = Partials{N,T}(values(partials))
 Base.convert{N,T}(::Type{Partials{N,T}}, partials::Partials{N,T}) = partials
 
 ########################
@@ -152,6 +187,29 @@ for N in 1:MAX_CHUNK_SIZE
 
     ex = tupexpr(i -> :((afactor * a[$i]) + (bfactor * b[$i])), N)
     @eval @inline mul_tuples(a::NTuple{$N}, b::NTuple{$N}, afactor, bfactor) = $ex
+
+    if VECEL_ENABLED
+
+        ex = tupexpr(i -> :(vecel(getval(tup[$i]) * getval(x))), N)
+        @eval @inline scale_tuple{T}(tup::NTuple{$N, VecElement{T}}, x) = $ex
+
+        ex = tupexpr(i -> :(vecel(getval(tup[$i]) / getval(x))), N)
+        @eval @inline div_tuple_by_scalar{T}(tup::NTuple{$N, VecElement{T}}, x) = $ex
+
+        ex = tupexpr(i -> :(vecel(getval(a[$i]) + getval(b[$i]))), N)
+        @eval @inline add_tuples{T1,T2}(a::NTuple{$N, VecElement{T1}}, b::NTuple{$N, VecElement{T2}}) = $ex
+
+        ex = tupexpr(i -> :(vecel(getval(a[$i]) - getval(b[$i]))), N)
+        @eval @inline sub_tuples{T1,T2}(a::NTuple{$N, VecElement{T1}}, b::NTuple{$N, VecElement{T2}}) = $ex
+
+        ex = tupexpr(i -> :(vecel(-getval(tup[$i]))), N)
+        @eval @inline minus_tuple{T}(tup::NTuple{$N, VecElement{T}}) = $ex
+
+        ex = tupexpr(i -> :(vecel((getval(afactor) * getval(a[$i])) + (getval(bfactor) * getval(b[$i])))), N)
+        @eval @inline mul_tuples{T1,T2}(a::NTuple{$N, VecElement{T1}}, b::NTuple{$N, VecElement{T2}}, afactor, bfactor) = $ex
+
+    end
+
 end
 
 ###################

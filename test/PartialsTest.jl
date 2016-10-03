@@ -4,6 +4,8 @@ using Base.Test
 using ForwardDiff
 using ForwardDiff.Partials
 
+import ForwardDiff: values
+
 samerng() = MersenneTwister(1)
 
 for N in (0, 3), T in (Int, Float32, Float64)
@@ -19,7 +21,7 @@ for N in (0, 3), T in (Int, Float32, Float64)
     # Utility/Accessor Functions #
     ##############################
 
-    @test PARTIALS.values == VALUES
+    @test values(PARTIALS) == VALUES
 
     @test ForwardDiff.numtype(PARTIALS) == T
     @test ForwardDiff.numtype(typeof(PARTIALS)) == T
@@ -49,10 +51,10 @@ for N in (0, 3), T in (Int, Float32, Float64)
     #####################
 
     @test zero(PARTIALS) == zero(typeof(PARTIALS))
-    @test zero(PARTIALS).values == map(zero, VALUES)
+    @test values(zero(PARTIALS)) == map(zero, VALUES)
 
     @test one(PARTIALS) == one(typeof(PARTIALS))
-    @test one(PARTIALS).values == map(one, VALUES)
+    @test values(one(PARTIALS)) == map(one, VALUES)
 
     @test rand(samerng(), PARTIALS) == rand(samerng(), typeof(PARTIALS))
 
@@ -96,19 +98,19 @@ for N in (0, 3), T in (Int, Float32, Float64)
     # Arithmetic Functions #
     ########################
 
-    @test (PARTIALS + PARTIALS).values == map(v -> v + v, VALUES)
-    @test (PARTIALS - PARTIALS).values == map(v -> v - v, VALUES)
-    @test getfield(-(PARTIALS), :values) == map(-, VALUES)
+    @test values(PARTIALS + PARTIALS) == map(v -> v + v, VALUES)
+    @test values(PARTIALS - PARTIALS) == map(v -> v - v, VALUES)
+    @test values(-(PARTIALS)) == map(-, VALUES)
 
     const X = rand()
     const Y = rand()
 
     @test X * PARTIALS == PARTIALS * X
-    @test (X * PARTIALS).values == map(v -> X * v, VALUES)
-    @test (PARTIALS / X).values == map(v -> v / X, VALUES)
+    @test values(X * PARTIALS) == map(v -> X * v, VALUES)
+    @test values(PARTIALS / X) == map(v -> v / X, VALUES)
 
     if N > 0
-        @test ForwardDiff._mul_partials(PARTIALS, PARTIALS2, X, Y).values == map((a, b) -> (X * a) + (Y * b), VALUES, VALUES2)
+        @test values(ForwardDiff._mul_partials(PARTIALS, PARTIALS2, X, Y)) == map((a, b) -> (X * a) + (Y * b), VALUES, VALUES2)
         @test ForwardDiff._div_partials(PARTIALS, PARTIALS2, X, Y) == ForwardDiff._mul_partials(PARTIALS, PARTIALS2, inv(Y), -X/(Y^2))
     end
 end
